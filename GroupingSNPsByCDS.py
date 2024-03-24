@@ -58,7 +58,15 @@ for gene in dg.features_of_type( target):
     # write boundaries of target region to bit_array
     chromosome, start, end = gene.seqid, int(gene.start), int(gene.end) 
     i = succinctArrayDict[ chromosome ].rank( start ) 
-    CDSdict[i] =  gene.attributes["protein_id"][0] 
+    protein = "NoProtein"
+    try:
+        if "protein_id" in gene.attributes:
+           protein = gene.attributes["protein_id"][0]
+        else:
+           protin = gene.attributes["gene"]
+    except KeyError:
+        pass
+    CDSdict[i] = protein
 
 #for i in CDSdict:
 #    print( i, CDSdict[i] )
@@ -71,4 +79,4 @@ for line in inVCF:
         ID = chrom + ":" + str(pos)
     CDSid = succinctArrayDict[chrom].rank( pos )
     if CDSid in CDSdict: # if variant is on CDS
-        print( ID, CDSdict[CDSid] )
+        print( CDSdict[CDSid], ID, sep="\t" )
